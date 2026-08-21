@@ -472,6 +472,48 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
+  function createShareUrl(activityName) {
+    const shareUrl = new URL(window.location.href);
+    shareUrl.searchParams.set("activity", activityName);
+    return shareUrl.toString();
+  }
+
+  function getShareText(activityName) {
+    return `Check out the ${activityName} activity at Mergington High School!`;
+  }
+
+  async function copyShareLink(shareUrl) {
+    try {
+      if (navigator.clipboard && window.isSecureContext) {
+        await navigator.clipboard.writeText(shareUrl);
+      } else {
+        const helperInput = document.createElement("textarea");
+        helperInput.value = shareUrl;
+        helperInput.setAttribute("readonly", "");
+        helperInput.style.position = "absolute";
+        helperInput.style.left = "-9999px";
+        document.body.appendChild(helperInput);
+        helperInput.select();
+        document.execCommand("copy");
+        document.body.removeChild(helperInput);
+      }
+      showMessage("Share link copied. You can send it to friends.", "success");
+    } catch (error) {
+      showMessage("Unable to copy link right now. Please try again.", "error");
+      console.error("Error copying share link:", error);
+    }
+  }
+
+  function applySharedActivityFromUrl() {
+    const sharedActivity = new URLSearchParams(window.location.search).get(
+      "activity"
+    );
+    if (sharedActivity) {
+      searchQuery = sharedActivity;
+      searchInput.value = sharedActivity;
+    }
+  }
+
   // Function to render a single activity card
   function renderActivityCard(name, details) {
     const activityCard = document.createElement("div");
@@ -498,6 +540,14 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // Format the schedule using the new helper function
     const formattedSchedule = formatSchedule(details);
+    const shareUrl = createShareUrl(name);
+    const shareText = getShareText(name);
+    const whatsappShareUrl = `https://wa.me/?text=${encodeURIComponent(
+      `${shareText} ${shareUrl}`
+    )}`;
+    const xShareUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(
+      shareText
+    )}&url=${encodeURIComponent(shareUrl)}`;
 
     // Create activity tag
     const tagHtml = `
@@ -552,6 +602,18 @@ document.addEventListener("DOMContentLoaded", () => {
             .join("")}
         </ul>
       </div>
+      <div class="share-actions">
+        <span class="share-label">Share:</span>
+        <button class="share-button share-copy" data-share-url="${shareUrl}">
+          Copy Link
+        </button>
+        <a class="share-button share-social" href="${whatsappShareUrl}" target="_blank" rel="noopener noreferrer">
+          WhatsApp
+        </a>
+        <a class="share-button share-social" href="${xShareUrl}" target="_blank" rel="noopener noreferrer">
+          X
+        </a>
+      </div>
       <div class="activity-card-actions">
         ${
           currentUser
@@ -576,6 +638,11 @@ document.addEventListener("DOMContentLoaded", () => {
     deleteButtons.forEach((button) => {
       button.addEventListener("click", handleUnregister);
     });
+
+    const copyShareButton = activityCard.querySelector(".share-copy");
+    if (copyShareButton) {
+      copyShareButton.addEventListener("click", () => copyShareLink(shareUrl));
+    }
 
     // Add click handler for register button (only when authenticated)
     if (currentUser) {
@@ -864,5 +931,6 @@ document.addEventListener("DOMContentLoaded", () => {
   // Initialize app
   checkAuthentication();
   initializeFilters();
+  applySharedActivityFromUrl();
   fetchActivities();
 });
