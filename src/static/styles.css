@@ -20,6 +20,10 @@
   --border: #e0e0e0;
   --border-light: #f0f0f0;
   --border-focus: #d0d0d0;
+  --header-button-background: rgba(255, 255, 255, 0.2);
+  --header-button-hover: rgba(255, 255, 255, 0.3);
+  --activity-tag-background: #e8eaf6;
+  --activity-tag-text: #3949ab;
 
   /* Feedback colors */
   --success: #2e7d32;
@@ -30,6 +34,20 @@
   --error-light: #ffebee;
   --info: #0c5460;
   --info-light: #d1ecf1;
+}
+
+body[data-theme="dark"] {
+  --background: #121212;
+  --surface: #1e1e1e;
+  --text-primary: #f5f5f5;
+  --text-secondary: #c7c7c7;
+  --border: #424242;
+  --border-light: #2d2d2d;
+  --border-focus: #5c5c5c;
+  --header-button-background: rgba(255, 255, 255, 0.14);
+  --header-button-hover: rgba(255, 255, 255, 0.24);
+  --activity-tag-background: #263238;
+  --activity-tag-text: #90caf9;
 }
 
 * {
@@ -195,8 +213,8 @@ section h3 {
   position: absolute;
   top: 8px;
   right: 8px;
-  background: #e8eaf6;
-  color: #3949ab;
+  background: var(--activity-tag-background);
+  color: var(--activity-tag-text);
   font-size: 0.65rem;
   font-weight: bold;
   padding: 2px 6px;
@@ -617,6 +635,9 @@ footer {
   position: absolute;
   top: 10px;
   right: 15px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
 }
 
 #user-status {
@@ -639,7 +660,7 @@ footer {
   display: flex;
   align-items: center;
   gap: 5px;
-  background-color: rgba(255, 255, 255, 0.2);
+  background-color: var(--header-button-background);
   border-radius: 20px;
   padding: 4px 12px;
   font-size: 0.85rem;
@@ -647,7 +668,7 @@ footer {
 }
 
 .icon-button:hover {
-  background-color: rgba(255, 255, 255, 0.3);
+  background-color: var(--header-button-hover);
 }
 
 .user-icon {
@@ -656,11 +677,11 @@ footer {
 
 #logout-button {
   padding: 3px 10px;
-  background-color: rgba(255, 255, 255, 0.2);
+  background-color: var(--header-button-background);
   font-size: 0.8rem;
   border-radius: 20px;
 }
 
 #logout-button:hover {
-  background-color: rgba(255, 255, 255, 0.3);
+  background-color: var(--header-button-hover);
 }
